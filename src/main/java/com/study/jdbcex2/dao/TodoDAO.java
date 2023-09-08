@@ -73,30 +73,26 @@ public class TodoDAO {
     public List<TodoVO> selectAll() throws Exception {
 
         String sql = "select * from tbl_todo";
+
+        @Cleanup Connection connection = ConnectionUtil.INSTANCE.getConnection();
+        @Cleanup PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        // select 문은 쿼리를 실행해야 하기 때문에 executeQuery()를 이용해 ResultSet을 구한다.
+        @Cleanup ResultSet resultSet = preparedStatement.executeQuery();
+
         List<TodoVO> list = new ArrayList<>();
 
-        try (Connection connection = ConnectionUtil.INSTANCE.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-             // select 문은 쿼리를 실행해야 하기 때문에 executeQuery()를 이용해 ResultSet을 구한다.
-             ResultSet resultSet = preparedStatement.executeQuery();
-        ) {
+        // ResultSet으로 각 행(row)을 이동하면서 각 행의 데이터를 TodoVO로 변환한다.
+        // next()의 결과는 이동할 수 있는 행이 존재하면 true, 아닌 경우엔 false를 반환한다.
+        while (resultSet.next()) {
+            TodoVO vo = TodoVO.builder()
+                    // getXXX()는 칼럼의 인덱스 번호(1부터)를 이용하거나 칼럼의 이름을 지정해서 가져올 수 있다.
+                    .tno(resultSet.getLong("tno"))
+                    .title(resultSet.getString("title"))
+                    .dueDate(resultSet.getDate("dueDate").toLocalDate())
+                    .finished(resultSet.getBoolean("finished"))
+                    .build();
 
-            // ResultSet으로 각 행(row)을 이동하면서 각 행의 데이터를 TodoVO로 변환한다.
-            // next()의 결과는 이동할 수 있는 행이 존재하면 true, 아닌 경우엔 false를 반환한다.
-            while (resultSet.next()) {
-                TodoVO vo = TodoVO.builder()
-                        // getXXX()는 칼럼의 인덱스 번호(1부터)를 이용하거나 칼럼의 이름을 지정해서 가져올 수 있다.
-                        .tno(resultSet.getLong("tno"))
-                        .title(resultSet.getString("title"))
-                        .dueDate(resultSet.getDate("dueDate").toLocalDate())
-                        .finished(resultSet.getBoolean("finished"))
-                        .build();
-
-                list.add(vo);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
+            list.add(vo);
         }
 
         return list;

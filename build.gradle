@@ -48,6 +48,8 @@ dependencies {
     // HikariCP가 내부적으로 slf4j 라이브러리를 사용하고 있어서 slf4j와 log4j2 연동하기 위해 추가
     implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.17.2'
 
+    // JSTL
+    implementation group: 'jstl', name: 'jstl', version: '1.2'
 
 }
 

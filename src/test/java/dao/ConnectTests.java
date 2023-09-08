@@ -47,6 +47,7 @@ public class ConnectTests {
     public void testHikariCP() throws Exception {
 
         HikariConfig config = new HikariConfig();
+        config.setDriverClassName("org.mariadb.jdbc.Driver");
         config.setJdbcUrl("jdbc:mariadb://localhost:3306/webdb");
         config.setUsername("webuser");
         config.setPassword("webuser");

@@ -17,6 +17,7 @@ public enum ConnectionUtil {
     ConnectionUtil() {
 
         HikariConfig config = new HikariConfig();
+        config.setDriverClassName("org.mariadb.jdbc.Driver"); // 이 코드 없으니까 안되네
         config.setJdbcUrl("jdbc:mariadb://localhost:3306/webdb");
         config.setUsername("webuser");
         config.setPassword("webuser");
